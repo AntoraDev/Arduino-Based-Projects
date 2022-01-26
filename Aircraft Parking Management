@@ -1,0 +1,88 @@
+#define trigPin1 3
+#define echoPin1 2
+#define trigPin2 4
+#define echoPin2 5
+#define trigPin3 7
+#define echoPin3 8
+#define LED1 9
+#define LED3 11
+#define servoPin 6
+
+#include <Servo.h>
+
+Servo servo;
+long duration, distance, PlaneSensor,SlotSensor1,SlotSensor2;
+char data;
+String SerialData="";
+
+void setup()
+{
+Serial.begin (9600);
+pinMode(trigPin1, OUTPUT);
+pinMode(echoPin1, INPUT);
+pinMode(trigPin2, OUTPUT);
+pinMode(echoPin2, INPUT);
+pinMode(trigPin3, OUTPUT);
+pinMode(echoPin3, INPUT);
+pinMode(LED1, OUTPUT);
+pinMode(LED3, OUTPUT);
+servo.attach(servoPin);
+}
+
+void loop() {
+SonarSensor(trigPin1, echoPin1);
+PlaneSensor = distance;
+SonarSensor(trigPin2, echoPin2);
+SlotSensor2 = distance;
+SonarSensor(trigPin3, echoPin3);
+SlotSensor1 = distance;
+
+while(Serial.available())
+{
+  delay(10);
+  data=Serial.read();
+  SerialData+=data;
+}
+
+SerialData="";
+  digitalWrite(LED1, LOW);
+  digitalWrite(LED3, LOW);
+  servo.write(0);
+if(PlaneSensor <=10)
+{
+  servo.write(180);
+  if(SlotSensor1 <=10)
+  {
+    servo.write(90);        
+    digitalWrite(LED1, LOW);
+    if(SlotSensor2 <=10)
+    {
+      servo.write(0);
+      digitalWrite(LED3, LOW);
+    }
+    else
+    {
+    //servo.write(180);
+    digitalWrite(LED3, HIGH);
+    }
+  }
+
+  else
+  {
+    //servo.write(180);
+    digitalWrite(LED1, HIGH);
+  }
+}
+}
+
+void SonarSensor(int trigPin,int echoPin)
+{
+digitalWrite(trigPin, LOW);
+delayMicroseconds(2);
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin, LOW);
+duration = pulseIn(echoPin, HIGH);
+distance = (duration/2) / 29.1;
+
+}
