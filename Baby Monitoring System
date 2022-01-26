@@ -1,0 +1,57 @@
+int soundSensor=7;
+int LED=9;
+boolean LEDStatus=false;
+#define trigPin 13
+#define echoPin 12
+#define ledpin 8
+
+long duration, distance;
+
+void setup() {
+  
+  Serial.begin (9600);
+  pinMode(trigPin, OUTPUT);
+  pinMode(ledpin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(soundSensor,INPUT);
+  pinMode(LED,OUTPUT);
+
+}
+
+void loop() {
+
+int SensorData=digitalRead(soundSensor); 
+  if(SensorData==1){
+
+    if(LEDStatus==false){
+        LEDStatus=true;
+        digitalWrite(LED,HIGH);
+    }
+    else{
+        LEDStatus=false;
+        digitalWrite(LED,LOW);
+    }
+  }
+sonar();
+
+ } 
+ void sonar()
+    {
+        digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration/2) / 29.1;
+
+    if (distance < 15)
+  {
+     digitalWrite(ledpin,HIGH);
+  }
+    else 
+  {
+    digitalWrite(ledpin,LOW);
+    
+  }
+    }
